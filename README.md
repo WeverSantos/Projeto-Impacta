@@ -31,19 +31,23 @@ O sistema irá gerenciar vendas de serviços prestados de uma oficina mecânica.
 
 # 🛠️ Abrir e rodar o projeto
 
-Após baixar o projeto, voce pode abrir com o visual studio code. Para isso, na tela da IDE clique em
-File >> Open File
+Antes de começar, você irá precisar ter instalado em sua máquina as seguintes ferramentas:
+[Python](https://www.python.org/), [Sqllite3](https://sqlite.org/index.html)
 
-Logo após efetue a instalação nos modulos necessarios para rodar o projeto:
+Além disto é bom ter um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/)
 
-pip install pyside6
-pip install sqlite3
-pip install pycep-correios
+### 🎲 Rodando o Back End
 
-Ao finalizar a instalação, voce pode executar a aplicação, na execução será criado um arquivo sql juntamente com as tabelas que serão utilizadas;
+Após efetuar o download do projeto, deverá instalar os seguintes modulos.
 
-Tecnologias utilizadas:
-Python
-Sqlite3
+- pip install pyside6
+- pip install sqlite3
+- pip install pycep-correios
+
+Ao finalizar a instalação, voce pode executar a aplicação, na execução do script será criado um arquivo sql juntamente com as tabelas que serão utilizadas;
+
+### 🛠 Tecnologias
+- [Python](https://www.python.org/)
+- [Sqllite3](https://sqlite.org/index.html)
 
 ![oficina'impacta](https://user-images.githubusercontent.com/81659894/231619146-998583d9-4542-477c-a3c1-dab7a932139c.jpg)
