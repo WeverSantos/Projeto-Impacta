@@ -1,13 +1,13 @@
-# Projeto-Impacta
 <h1 align="center"> Oficina Impacta </h1>
+<h1 align="center">:construction: Projeto em construção :construction: </h1>
 
-Descrição do Projeo:
+## Descrição do Projeto
 
 Projeto em desenvolvimento para a disciplica de software product do curso de análise e desenvolvimento de sistemas. 
 O sistema irá gerenciar vendas de serviços prestados de uma oficina mecânica. Assim possibitando ter um controle diario de vendas efetudas para o controle financeiro, com alternativas de relatório de controle e verificação diariá de pedidos pendentes de pagamento ou em andamento. 
 
 
-:construction: Projeto em construção :construction:
+
 
 # :hammer: Funcionalidades do projeto
 
@@ -19,7 +19,7 @@ O sistema irá gerenciar vendas de serviços prestados de uma oficina mecânica.
 
 # 📁 Acesso ao projeto
 
-**Voce pode baixar o projeto na tela inical**
+**Voce pode baixar o projeto na tela inical **
 
 # 🛠️ Abrir e rodar o projeto
 
