@@ -17,6 +17,14 @@ O sistema irá gerenciar vendas de serviços prestados de uma oficina mecânica.
 - `Funcionalidade 4`: Gerar pedido de venda
 - `Funcionalidade 5`: Gerar relatório de vendas
 
+### Features
+
+- [x] Cadastro de cliente
+- [ ] Cadastro de produtos
+- [ ] Cadastro de veiculos
+- [ ] Gerar pedido de venda
+- [ ] Gerar relatório de vendas
+
 # 📁 Acesso ao projeto
 
 **Voce pode baixar o projeto na tela inical **
