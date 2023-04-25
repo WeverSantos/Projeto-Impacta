@@ -1,7 +1,8 @@
 import sqlite3
+import re
 # #Criando o Banco de Dados:
-# FUNÇÃO CRIANDO BANCO DE DADOS
 
+# FUNÇÃO CRIANDO BANCO DE DADOS
 class Data_base:
 
     def __init__(self, name= 'system.db') -> None:
@@ -15,7 +16,8 @@ class Data_base:
             self.connection.close()
         except Exception as e:
             print(e)
-#FUNÇÃO CRIANDO A TABELA
+    
+    #função criando tabelas
     def create_table_clientes(self):
         self.connect()
         cursor = self.connection.cursor()
@@ -39,20 +41,92 @@ class Data_base:
                             """)
         self.close_connection()
 
-    def registro_clientes(self, fullDataSet):
+    def create_table_produtos(self):
+        self.connect()
+        cursor = self.connection.cursor()
+        cursor.execute("""
+
+                        CREATE TABLE IF NOT EXISTS Produtos(
+       COD TEXT,                     
+       NOME TEXT,
+       TIPO TEXT,
+       PRECO TEXT,
+
+       PRIMARY KEY (COD)
+       );
+
+                            """)
+        self.close_connection()
+
+    def create_table_veiculos(self):
+        self.connect()
+        cursor = self.connection.cursor()
+        cursor.execute("""
+
+                        CREATE TABLE IF NOT EXISTS Veiculos(
+       placa TEXT,                     
+       cpf TEXT,
+       marca TEXT,
+       nome TEXT,
+       cor TEXT,
+       Ano TEXT,
+
+       PRIMARY KEY (cpf)
+       );
+
+                            """)
+        self.close_connection()
+
+    
+    #Função registrar no banco de dados
+    def registro_clientes(self, fullDataSet):      
+      self.connect()
+      campos_tabela = ('NOME','CPF','TELEFONE','CEP','LOGRADOURO','NUMERO',
+                     'COMPLEMENTO','BAIRRO','CIDADE')
+      qntd = ("?,?,?,?,?,?,?,?,?")
+      cursor = self.connection.cursor()        
+    
+    # Verificar se o CPF está vazio ou é inválido
+      cpf = fullDataSet[1]
+      print("Valor de cpf:", cpf)
+      if not cpf or len(cpf) != 14:
+        return 'erro', 'CPF é obrigatório e deve ter 11 caracteres.'
+    
+    #VERIFICAR SE O CPF JÁ EXISTE
+      cursor.execute("SELECT CPF FROM Clientes WHERE CPF=?", (cpf,))
+      cpf_existente = cursor.fetchone()
+      if cpf_existente:
+        # CPF já existe, retornar erro
+        return 'erro', 'CPF já cadastrado.'    
+
+    #REGISTRAR OS DADOS
+      try:
+          cursor.execute(f"""INSERT INTO Clientes {campos_tabela}
+                            VALUES ({qntd})""", fullDataSet)
+          self.connection.commit()
+          return "OK", "Cliente cadastrado com sucesso!"
+      except Exception as e:
+        print(e)
+        return 'erro', str(e)
+      finally:
+        self.close_connection()
+
+    # Função para registar os dados da tela de cadastro_produtos
+    def registro_produtos(self, fullDataSet):
 
         self.connect()
-        campos_tabela = ('NOME','CPF','TELEFONE','CEP','LOGRADOURO','NUMERO',
-        'COMPLEMENTO','BAIRRO','CIDADE')
-        qntd = ("?,?,?,?,?,?,?,?,?")
+        campos_tabela = ('COD', 'NOME', 'TIPO', 'PRECO')
+        qntd = ("?,?,?,?")
         cursor = self.connection.cursor()
+        if fullDataSet[0] == '':
+            return 'erro', 'O campo COD é obrigatório.'
         #REGISTRAR OS DADOS
         try:
-            cursor.execute(f"""INSERT INTO Clientes {campos_tabela}
+            cursor.execute(f"""INSERT INTO Produtos {campos_tabela}
 
                     VALUES ({qntd})""", fullDataSet)
             self.connection.commit()
-            return "OK", "Cliente cadastrado com sucesso!"
+            return "OK", "Produto ou Serviço cadastrado com sucesso!"
         except Exception as e:
             print(e)
             return 'erro', str(e)
@@ -60,7 +134,31 @@ class Data_base:
         finally:
             self.close_connection()
 
-    #função selecionar
+    # Função para registrar os dados da tela de cadastro_veiculos
+    def registro_veiculos(self, fullDataSet):
+
+        self.connect()
+        campos_tabela = ('placa', 'cpf', 'marca', 'nome','cor','ano')
+        qntd = ("?,?,?,?,?,?")
+        cursor = self.connection.cursor()
+        if fullDataSet[0] == '':
+            return 'erro', 'O campo Placa é obrigatório.'
+        #REGISTRAR OS DADOS
+        try:
+            cursor.execute(f"""INSERT INTO Veiculos {campos_tabela}
+
+                    VALUES ({qntd})""", fullDataSet)
+            self.connection.commit()
+            return "OK", "Veiculo cadastrado com sucesso"
+        except Exception as e:
+            print(e)
+            return 'erro', str(e)
+
+        finally:
+            self.close_connection()
+        
+
+    #Função selecionar Clientes
     def select_all_clientes(self):
         try:
             self.connect()
@@ -73,7 +171,34 @@ class Data_base:
         finally:
             self.close_connection()
 
-    #função deletar
+    #Função selecionar Produtos
+    def select_all_produtos(self):
+        try:
+            self.connect()
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM Produtos ORDER BY COD")
+            produtos = cursor.fetchall()
+            return produtos
+        except Exception as e:
+            print(e)
+        finally:
+            self.close_connection()
+
+#Função selecionar Veiculos
+    def select_all_Veiculos(self):
+        try:
+            self.connect()
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM Veiculos ORDER BY COD")
+            veiculos = cursor.fetchall()
+            return veiculos
+        except Exception as e:
+            print(e)
+        finally:
+            self.close_connection()
+
+
+    #Função deletar clientes
     def delete_clientes(self, cpf):
 
         try:
@@ -81,35 +206,103 @@ class Data_base:
             cursor = self.connection.cursor()
             cursor.execute(f"DELETE  FROM Clientes WHERE CPF = '{cpf}'")
             self.connection.commit()
-            return "OK"
+            return 'OK', 'Cliente deletado com sucesso!' 
         except Exception as e:
-            print(e)
+            return 'erro', str(e)
         finally:
             self.close_connection()
 
-    #função update;; atualizar tabela
-    def update_company(self, fullDataSet):
+    #Função deletar produtos
+    def delete_produtos(self, cod):
 
+        try:
+            self.connect()
+            cursor = self.connection.cursor()
+            cursor.execute(f"DELETE  FROM Produtos WHERE COD = '{cod}'")
+            self.connection.commit()
+            return 'OK', 'Produto ou serviço deletado com sucesso!' 
+        except Exception as e:
+            return 'erro', str(e)
+        finally:
+            self.close_connection()
+
+    #Função deletar veiculos
+    def delete_veiculos(self, placa):
+
+        try:
+            self.connect()
+            cursor = self.connection.cursor()
+            cursor.execute(f"DELETE  FROM Veiculos WHERE COD = '{placa}'")
+            self.connection.commit()
+            return 'OK', 'Veiculo deletado com sucesso!' 
+        except Exception as e:
+            return 'erro', str(e)
+        finally:
+            self.close_connection()
+
+
+    
+    #Função para atualizar dados dos registro da tabela clientes
+    def update_clientes(self, nome, telefone, cep, logradouro, numero, complemento, bairro, cidade, cpf):
         self.connect()
 
         try:
             cursor = self.connection.cursor()
-            cursor.execute(f"""
-
-                            NOME = '{fullDataSet[0]}',
-                            CPF = '{fullDataSet[1]}',
-                            TELEFONE = '{fullDataSet[2]}',
-                            CEP = '{fullDataSet[3]}',
-                            LOGRADOURO = '{fullDataSet[4]}',
-                            NUMERO = '{fullDataSet[5]}',
-                            COMPLEMENTO = '{fullDataSet[6]}',
-                            BAIRRO = '{fullDataSet[7]}',
-                            CIDADE = '{fullDataSet[8]}'
-
-                            WHERE CPF = '{fullDataSet[1]}'""")
-            self.connect.commit()
+            nome = (nome)
+            telefone = (telefone)
+            cep = (cep)
+            logradouro = (logradouro)
+            numero = (numero)
+            complemento = (complemento)
+            bairro = (bairro)
+            cidade = (cidade)
+            cursor.execute("""UPDATE CLIENTES SET NOME = ?, TELEFONE = ?, CEP = ?, LOGRADOURO = ?, NUMERO = ?, 
+                  COMPLEMENTO = ?, BAIRRO = ?, CIDADE = ? WHERE CPF = ?""",
+               (nome, telefone, cep, logradouro, numero, complemento, bairro, cidade, cpf))
+            self.connection.commit()
+            return 'OK', 'Dados atualizados com sucesso!'            
         except Exception as e:
-            print(e)
-
+            return 'erro', str(e)
         finally:
-                self.close_connection
+            self.close_connection()
+
+          
+    #Função para atualizar dados dos registro da tabela produtos
+    def update_produtos(self, COD, NOME, TIPO, PRECO):
+        self.connect()
+
+        try:
+            cursor = self.connection.cursor()
+            COD = (COD)            
+            NOME = (NOME)
+            TIPO = (TIPO)
+            PRECO = (PRECO)            
+            cursor.execute("""UPDATE Produtos SET COD = ?, NOME = ?, TIPO = ?, PRECO = ?""",
+               (COD, NOME, TIPO, PRECO))
+            self.connection.commit()
+            return 'OK', 'Dados atualizados com sucesso!'
+        except Exception as e:
+            return 'erro', str(e)
+        finally:
+            self.close_connection()
+
+      #Função para atualizar dados dos registro da tabela veiculos
+    def update_produtos(self, placa, cpf, marca, nome, cor, ano):
+        self.connect()
+
+        try:
+            cursor = self.connection.cursor()
+            placa = (placa)            
+            cpf = (cpf)
+            marca = (marca)
+            nome = (nome)            
+            cor = (cor)
+            ano = (ano)
+            cursor.execute("""UPDATE Veiculos SET placa = ?, cpf = ?, marca = ?, nome = ?, cor = ?, ano = ?""",
+               (placa, cpf, marca, nome, cor, ano))
+            self.connection.commit()
+            return 'OK', 'Dados atualizados com sucesso!'
+        except Exception as e:
+            return 'erro', str(e)
+        finally:
+            self.close_connection()
