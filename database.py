@@ -67,7 +67,7 @@ class Data_base:
        placa TEXT,                     
        cpf TEXT,
        marca TEXT,
-       nome TEXT,
+       modelo TEXT,
        cor TEXT,
        Ano TEXT,
 
@@ -138,7 +138,7 @@ class Data_base:
     def registro_veiculos(self, fullDataSet):
 
         self.connect()
-        campos_tabela = ('placa', 'cpf', 'marca', 'nome','cor','ano')
+        campos_tabela = ('placa', 'cpf', 'marca', 'modelo','cor','ano')
         qntd = ("?,?,?,?,?,?")
         cursor = self.connection.cursor()
         if fullDataSet[0] == '':
@@ -287,7 +287,7 @@ class Data_base:
             self.close_connection()
 
       #Função para atualizar dados dos registro da tabela veiculos
-    def update_produtos(self, placa, cpf, marca, nome, cor, ano):
+    def update_produtos(self, placa, cpf, marca, modelo, cor, ano):
         self.connect()
 
         try:
@@ -295,11 +295,11 @@ class Data_base:
             placa = (placa)            
             cpf = (cpf)
             marca = (marca)
-            nome = (nome)            
+            modelo = (modelo)            
             cor = (cor)
             ano = (ano)
-            cursor.execute("""UPDATE Veiculos SET placa = ?, cpf = ?, marca = ?, nome = ?, cor = ?, ano = ?""",
-               (placa, cpf, marca, nome, cor, ano))
+            cursor.execute("""UPDATE Veiculos SET placa = ?, cpf = ?, marca = ?, modelo = ?, cor = ?, ano = ?""",
+               (placa, cpf, marca, modelo, cor, ano))
             self.connection.commit()
             return 'OK', 'Dados atualizados com sucesso!'
         except Exception as e:
